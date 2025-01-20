@@ -4,10 +4,17 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MedicoController;
 
 Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/turnos/{medicoId}', [HomeController::class, 'turnosDisponibles'])->name('turnos.calendario');
+
+//Horarios medicos
+Route::get('/medicos/{id}/horarios', [MedicoController::class, 'mostrarHorarios'])->name('medicos.horarios');
+
+
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -13,6 +13,7 @@ class HomeController extends Controller
     {
         // Obtener todos los médicos
         $medicos = Medicos::all();
+        
 
         // Obtiene los turnos disponibles
         $turnos = Turno::where('estado', 'disponible')->get();
@@ -32,8 +33,6 @@ class HomeController extends Controller
             ->select('id', 'hora_turno', 'estado', 'tipo_turno')
             ->get();
 
-        return view('turnos.calendario', compact('turnos'));
+        return view('welcome', compact('turnos'));
     }
 }
-
-

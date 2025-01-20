@@ -10,15 +10,15 @@ class Medicos extends Model
     use HasFactory;
 
     protected $table = 'medicos';
-    
-    
+
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
 
-       
+
     protected $fillable = [
         'nombre',
         'especialidad',
@@ -36,4 +36,14 @@ class Medicos extends Model
         'horario_inicio' => 'datetime:H:i',
         'horario_fin' => 'datetime:H:i',
     ];
+
+    public function diasAtencion()
+    {
+        return $this->hasMany(DiaAtencion::class, 'medico_id'); // Clave foránea 'medico_id'
+    }
+
+    public function vacaciones()
+    {
+        return $this->hasMany(Vacacion::class, 'medico_id'); // Clave foránea 'medico_id'
+    }
 }
