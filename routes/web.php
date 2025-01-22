@@ -8,11 +8,14 @@ use App\Http\Controllers\MedicoController;
 
 Route::get('/', [HomeController::class, 'index']);
 
-Route::get('/turnos/{medicoId}', [HomeController::class, 'turnosDisponibles'])->name('turnos.calendario');
+Route::get('/turnos/{medicoId}', [HomeController::class, 'turnosDisponibles'])->name('turnos.disponibles');
 
 //Horarios medicos
 Route::get('/medicos/{id}/horarios', [MedicoController::class, 'mostrarHorarios'])->name('medicos.horarios');
 
+
+Route::get('/medicos/{id}/crear-turnos', [MedicoController::class, 'crearTurnosDisponibles'])->name('medicos.crear_turnos');
+Route::post('/medicos/{id}/guardar-turnos', [MedicoController::class, 'guardarTurnosDisponibles'])->name('medicos.guardar_turnos');
 
 
 

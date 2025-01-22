@@ -1111,56 +1111,96 @@
     </style>
     @endif
 
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+{{--    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>--}}
 
+{{--    <script>--}}
+{{--    document.addEventListener('DOMContentLoaded', function() {--}}
+{{--        var calendarEl = document.getElementById('calendar');--}}
+{{--        var calendar = new FullCalendar.Calendar(calendarEl, {--}}
+{{--            initialView: 'dayGridMonth',--}}
+{{--            events: [--}}
+{{--                @foreach($turnos as $turno) {--}}
+{{--                    title: 'Disponible',--}}
+{{--                    start: '{{ $turno->hora_turno }}',--}}
+{{--                    allDay: false--}}
+{{--                },--}}
+{{--                @endforeach--}}
+{{--            ]--}}
+{{--        });--}}
+{{--        calendar.render();--}}
+{{--    });--}}
+{{--    </script>--}}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            events: [
-                @foreach($turnos as $turno) {
-                    title: 'Disponible',
-                    start: '{{ $turno->hora_turno }}',
-                    allDay: false
-                },
-                @endforeach
-            ]
-        });
-        calendar.render();
-    });
-    </script>
-'
+        $(document).ready(function () {
+            // Detectar cambio en el select de médicos
+            $('#medico_id').on('change', function () {
+                const medicoId = $(this).val(); // Obtener el ID del médico seleccionado
 
+                // Solicitud AJAX para obtener los turnos
+                $.ajax({
+                    url: `/turnos/${medicoId}`, // Ruta definida en web.php
+                    method: 'GET',
+                    success: function (response) {
+                        // Limpiar el contenedor de turnos
+                        $('#turnos-disponibles').empty();
+
+                        if (response.length > 0) {
+                            // Construir la lista de turnos
+                            let html = '<ul class="list-group">';
+                            response.forEach(turno => {
+                                html += `<li class="list-group-item">
+                                        <strong>Hora:</strong> ${turno.hora_turno} |
+                                        <strong>Tipo:</strong> ${turno.tipo_turno}
+                                    </li>`;
+                            });
+                            html += '</ul>';
+                            $('#turnos-disponibles').html(html);
+                        } else {
+                            $('#turnos-disponibles').html('<p>No hay turnos disponibles para este médico.</p>');
+                        }
+                    },
+                    error: function () {
+                        $('#turnos-disponibles').html('<p>Ocurrió un error al obtener los turnos. Inténtalo nuevamente.</p>');
+                    }
+                });
+            });
+        });
+    </script>
 
 
 </head>
 
-<body class="font-sans antialiased dark:bg-black dark:text-white/50">
+<body class="font-sans antialiased dark:bg-black dark:text-white/50 text-center">
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-black">
         <h1>Turnos Laravel</h1>
+
+        <form id="form-medicos">
+            <select name="medico_id" id="medico_id" class="form-select medico_id">
+                <option value="" disabled selected>Selecciona un médico</option>
+                @if(isset($medicos) && $medicos->count())
+                    @foreach ($medicos as $medico)
+                        <option value="{{ $medico->id }}">
+                            {{ $medico->nombre }}
+                        </option>
+                    @endforeach
+                @endif
+            </select>
+        </form>
+
+        <!-- Contenedor para los turnos disponibles -->
+        <div id="turnos-disponibles" class="mt-4">
+            <p>Selecciona un médico para ver sus turnos disponibles.</p>
+        </div>
+
     </div>
 
-    <!-- Formulario con un select para elegir el médico -->
-    <form action="#" method="GET">
-        <select name="medico_id" id="medico_id" class="form-select medico_id">
-            <option value="" disabled selected>Selecciona un médico</option>
-            @if(isset($medicos) && $medicos->count())
-            @foreach ($medicos as $medico)
-            <option value="{{ $medico->id }}">
-                {{ $medico->nombre }}
-            </option>
-            @endforeach
-            @endif
 
-        </select>
 
-        <button type="submit" class="btn btn-primary mt-2">Ver Turnos Disponibles</button>
-    </form>
-
-    <div class="container mx-auto px-4">
-        <div id="calendar"></div>
-    </div>
+{{--    <div class="container mx-auto px-4">--}}
+{{--        <div id="calendar"></div>--}}
+{{--    </div>--}}
 
 </body>
 
